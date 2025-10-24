@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h3 class="mb-4">Dashboard</h3>
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card stat-card bg-light">
+      <div class="card-body">
+        <div class="h6 text-muted">Totale</div>
+        <div class="display-6">{{ total }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stat-card bg-light">
+      <div class="card-body">
+        <div class="h6 text-muted">Aperti</div>
+        <div class="display-6">{{ open_count }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stat-card bg-light">
+      <div class="card-body">
+        <div class="h6 text-muted">In lavorazione</div>
+        <div class="display-6">{{ progress_count }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stat-card bg-light">
+      <div class="card-body">
+        <div class="h6 text-muted">Chiusi</div>
+        <div class="display-6">{{ closed_count }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h5>Ultimi 10 aggiornamenti</h5>
+<div class="list-group">
+  {% for t in recent %}
+  <a class="list-group-item list-group-item-action" href="{{ url_for('ticket_detail', ticket_id=t.id) }}">
+    <div class="d-flex w-100 justify-content-between">
+      <h6 class="mb-1">#{{ t.id }} • {{ t.title }}</h6>
+      <small>{{ t.updated_at.strftime('%d/%m/%Y %H:%M') }}</small>
+    </div>
+    <small>Stato: {{ t.status.value }} • Priorità: {{ t.priority }} • Assegnato a: {{ t.assigned_to.name if t.assigned_to else 'Nessuno' }}</small>
+  </a>
+  {% else %}
+  <div class="text-muted">Nessun ticket ancora.</div>
+  {% endfor %}
+</div>
+{% endblock %}
