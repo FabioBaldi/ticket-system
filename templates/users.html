@@ -21,15 +21,15 @@
       <td>{{ u.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
       <td>
         {% if current_user.is_admin and not u.is_admin and u.id != current_user.id %}
-        <form action="{{ url_for('delete_user', user_id=u.id) }}" method="POST"
-              onsubmit="return confirm('Eliminare definitivamente {{ u.name }}?');" style="display:inline;">
+        <form action="{{ url_for('delete_user', user_id=u.id) }}" method="POST" onsubmit="return confirm('Eliminare definitivamente {{ u.name }}?');" style="display:inline;">
           <button class="btn btn-sm btn-danger">Elimina</button>
         </form>
-        {% else %} — {% endif %}
+        {% else %}
+        —
+        {% endif %}
       </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% endblock %}
-
