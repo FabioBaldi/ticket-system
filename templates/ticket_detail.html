@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Ticket #{{ t.id }}{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card shadow mb-3">
+      <div class="card-body">
+        <h3 class="mb-1">#{{ t.id }} — {{ t.title }}</h3>
+        <div class="text-muted mb-2">
+          Creato da <strong>{{ t.created_by.name }}</strong> il {{ t.created_at.strftime('%d/%m/%Y %H:%M') }}
+        </div>
+        <p style="white-space:pre-wrap">{{ t.description }}</p>
+        {% if t.attachment %}
+          <div class="mt-3">
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('uploads', filename=t.attachment) }}">Scarica allegato</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card shadow">
+      <div class="card-body">
+        <h5 class="mb-3">Cronologia</h5>
+        <ul class="list-group">
+          {% for a in actions %}
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between">
+              <div><strong>{{ a.user.name }}</strong>: {{ a.action }}{% if a.notes %} — <em>{{ a.notes }}</em>{% endif %}</div>
+              <small class="text-muted">{{ a.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+            </div>
+          </li>
+          {% else %}
+          <li class="list-group-item text-muted">Nessuna azione registrata.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow">
+      <div class="card-body">
+        <h5 class="mb-3">Modifica / Commenta</h5>
+        <form method="POST" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            <label class="form-label">Stato</label>
+            {{ form.status(class="form-select") }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Priorità</label>
+            {{ form.priority(class="form-select") }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Assegnatario</label>
+            {{ form.assigned_to(class="form-select") }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Note</label>
+            {{ form.notes(class="form-control", rows=3) }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Allegato</label>
+            {{ form.attachment(class="form-control") }}
+          </div>
+          {{ form.submit(class="btn btn-primary w-100") }}
+        </form>
+      </div>
+      <div class="card-footer">
+        <div class="d-flex gap-2">
+          <span class="badge {% if t.status.value=='APERTO' %}bg-danger{% elif t.status.value=='IN_LAVORAZIONE' %}bg-warning text-dark{% else %}bg-success{% endif %}">{{ t.status.value }}</span>
+          <span class="badge bg-info">{{ t.priority }}</span>
+          <span class="badge bg-secondary">{{ t.assigned_to.name if t.assigned_to else '—' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

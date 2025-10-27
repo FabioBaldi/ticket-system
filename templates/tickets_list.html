@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Ticket{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Ticket</h3>
+  <div>
+    <a href="{{ url_for('tickets', status='all') }}" class="btn btn-sm {% if status=='all' %}btn-primary{% else %}btn-outline-primary{% endif %}">Tutti</a>
+    <a href="{{ url_for('tickets', status='open') }}" class="btn btn-sm {% if status=='open' %}btn-primary{% else %}btn-outline-primary{% endif %}">Aperti</a>
+    <a href="{{ url_for('tickets', status='in_progress') }}" class="btn btn-sm {% if status=='in_progress' %}btn-primary{% else %}btn-outline-primary{% endif %}">In lavorazione</a>
+    <a href="{{ url_for('tickets', status='closed') }}" class="btn btn-sm {% if status=='closed' %}btn-primary{% else %}btn-outline-primary{% endif %}">Chiusi</a>
+    <a href="{{ url_for('export_tickets', status=status) }}" class="btn btn-success btn-sm">  📊 Esporta</a>
+  </div>
+</div>
+<table class="table table-hover align-middle">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Titolo</th>
+      <th>Stato</th>
+      <th>Priorità</th>
+      <th>Assegnato</th>
+      <th>Aggiornato</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in items %}
+    <tr onclick="window.location='{{ url_for('ticket_detail', ticket_id=t.id) }}'" style="cursor:pointer">
+      <td>{{ t.id }}</td>
+      <td>{{ t.title }}</td>
+      <td><span class="badge {% if t.status.value=='APERTO' %}bg-danger{% elif t.status.value=='IN_LAVORAZIONE' %}bg-warning text-dark{% else %}bg-success{% endif %}">{{ t.status.value }}</span></td>
+      <td>{{ t.priority }}</td>
+      <td>{{ t.assigned_to.name if t.assigned_to else '—' }}</td>
+      <td>{{ t.updated_at.strftime('%d/%m/%Y %H:%M') }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="text-muted">Nessun ticket trovato.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

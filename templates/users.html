@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Utenti{% endblock %}
+{% block content %}
+<h3 class="mb-3">Utenti</h3>
+<table class="table table-striped align-middle">
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Email</th>
+      <th>Admin</th>
+      <th>Creato il</th>
+      <th>Azioni</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for u in items %}
+    <tr>
+      <td>{{ u.name }}</td>
+      <td>{{ u.email }}</td>
+      <td>{% if u.is_admin %}<span class="badge bg-success">Sì</span>{% else %}<span class="badge bg-secondary">No</span>{% endif %}</td>
+      <td>{{ u.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+      <td>
+        {% if current_user.is_admin and not u.is_admin and u.id != current_user.id %}
+        <form action="{{ url_for('delete_user', user_id=u.id) }}" method="POST"
+              onsubmit="return confirm('Eliminare definitivamente {{ u.name }}?');" style="display:inline;">
+          <button class="btn btn-sm btn-danger">Elimina</button>
+        </form>
+        <form action="{{ url_for('reset_password', user_id=u.id) }}" method="POST"
+              onsubmit="return confirm('Generare una nuova password per {{ u.name }}? Verrà mostrata qui in alto.');" style="display:inline;">
+          <button class="btn btn-sm btn-warning">Cambia password</button>
+        </form>
+        {% else %} — {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
