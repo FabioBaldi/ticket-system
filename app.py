@@ -44,6 +44,18 @@ def create_app():
     with app.app_context():
         db.create_all()
 
+         # CREA UN ADMIN SOLO SE NON ESISTONO UTENTI
+    if User.query.count() == 0:
+        admin_name = os.getenv("ADMIN_NAME", "Admin")
+        admin_email = os.getenv("ADMIN_EMAIL", "admin@example.com")
+        admin_password = os.getenv("ADMIN_PASSWORD", "changeme")
+
+        u = User(name=admin_name, email=admin_email, is_admin=True)
+        u.set_password(admin_password)
+        db.session.add(u)
+        db.session.commit()
+        app.logger.info(f"Created initial admin: {admin_email}")
+
         # Seed amministratore opzionale (usa variabili ENV se presenti)
         admin_email = os.getenv('ADMIN_EMAIL')
         admin_password = os.getenv('ADMIN_PASSWORD')
